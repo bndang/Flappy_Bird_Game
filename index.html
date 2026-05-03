@@ -1,0 +1,1676 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlappyBird</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --sky: #70c5ce;
+        --page-bg: #5aa8b5;
+        /* Canvas (read by getComputedStyle in JS) */
+        --canvas-sky-top: #70c5ce;
+        --canvas-sky-bottom: #8fd4db;
+        --canvas-cloud: #ffffff;
+        --canvas-city-light: #c8e6a0;
+        --canvas-city-dark: #9ccc65;
+        --canvas-forest: #2d5016;
+        --canvas-grass: #75bd2e;
+        --canvas-grass-top: #5a9a22;
+        --canvas-dirt: #dee284;
+        --canvas-dirt-stripe: rgba(0, 0, 0, 0.12);
+        --canvas-pipe: #e99655;
+        --canvas-pipe-shade: #c76b2d;
+        --canvas-pipe-stroke: #1a1a1a;
+        --canvas-star: transparent;
+        --theme-toggle-bg: rgba(255, 255, 255, 0.92);
+        --theme-toggle-fg: #1e293b;
+        --theme-toggle-border: rgba(0, 0, 0, 0.12);
+        --ui-orange: #e86101;
+        --ui-orange-mid: #ef6c00;
+        --ui-orange-dark: #c75401;
+        --ui-orange-highlight: #ffb74d;
+        --arcade-edge: #4a2100;
+        --arcade-depth: 6px;
+        --panel-tan: #ddd894;
+        --panel-border: #b8a66a;
+        --text-dark: #3d2914;
+        --subtitle-green: #66bb6a;
+        --white: #fff;
+        --shadow: #1a1a1a;
+        --menu-tint-top: rgba(255, 255, 255, 0.14);
+        --menu-tint-bottom: rgba(0, 48, 56, 0.35);
+        --ready-glow: rgba(255, 255, 255, 0.12);
+        --go-modal: rgba(8, 12, 18, 0.72);
+      }
+
+      html[data-theme="dark"] {
+        --page-bg: #0f1724;
+        --sky: #152f3d;
+        --canvas-sky-top: #0c2430;
+        --canvas-sky-bottom: #1a3d4f;
+        --canvas-cloud: rgba(200, 220, 235, 0.22);
+        --canvas-city-light: #3d5a32;
+        --canvas-city-dark: #2d4530;
+        --canvas-forest: #0a1a0a;
+        --canvas-grass: #4a7c23;
+        --canvas-grass-top: #3a6520;
+        --canvas-dirt: #5c4d36;
+        --canvas-dirt-stripe: rgba(255, 255, 255, 0.08);
+        --canvas-pipe: #b87a4a;
+        --canvas-pipe-shade: #7a4a28;
+        --canvas-pipe-stroke: #0a0a0a;
+        --canvas-star: #e8f4fc;
+        --theme-toggle-bg: rgba(30, 42, 58, 0.95);
+        --theme-toggle-fg: #e2e8f0;
+        --theme-toggle-border: rgba(255, 255, 255, 0.12);
+        --menu-tint-top: rgba(80, 160, 200, 0.1);
+        --menu-tint-bottom: rgba(0, 0, 0, 0.5);
+        --ready-glow: rgba(100, 180, 220, 0.08);
+        --go-modal: rgba(0, 0, 0, 0.78);
+        --subtitle-green: #81c784;
+        --panel-tan: #3d352b;
+        --panel-border: #5c4d3a;
+        --text-dark: #e8dcc8;
+        --white: #e8edf3;
+        --shadow: #0a0a0a;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        min-height: 100dvh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: max(12px, env(safe-area-inset-top))
+          max(12px, env(safe-area-inset-right))
+          max(12px, env(safe-area-inset-bottom))
+          max(12px, env(safe-area-inset-left));
+        background: var(--page-bg);
+        font-family: "Press Start 2P", ui-monospace, monospace;
+        transition: background 0.25s ease;
+      }
+
+      /* Portrait phone frame — vertical emphasis */
+      #stage {
+        position: relative;
+        width: min(480px, 100%);
+        max-width: 100vw;
+        aspect-ratio: 480 / 720;
+        max-height: min(720px, 100dvh - 24px);
+        margin-inline: auto;
+        box-shadow:
+          0 16px 48px rgba(0, 0, 0, 0.38),
+          inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        border-radius: clamp(14px, 4vw, 22px);
+        overflow: hidden;
+        background: var(--sky);
+        transition: background 0.25s ease;
+      }
+
+      .theme-toggle {
+        position: absolute;
+        top: max(10px, env(safe-area-inset-top));
+        right: max(10px, env(safe-area-inset-right));
+        z-index: 30;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        border: 2px solid var(--theme-toggle-border);
+        background: var(--theme-toggle-bg);
+        color: var(--theme-toggle-fg);
+        font-size: 20px;
+        line-height: 1;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        transition:
+          background 0.2s ease,
+          color 0.2s ease,
+          border-color 0.2s ease;
+      }
+
+      .theme-toggle:hover {
+        filter: brightness(1.06);
+      }
+
+      .theme-toggle:focus-visible {
+        outline: 2px solid var(--ui-orange);
+        outline-offset: 2px;
+      }
+
+      #game {
+        display: block;
+        width: 100%;
+        height: 100%;
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+      }
+
+      /* ---------- Overlay screens ---------- */
+      .screen {
+        position: absolute;
+        inset: 0;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: clamp(28px, 7vh, 48px) clamp(18px, 5vw, 26px);
+        text-align: center;
+        z-index: 20;
+        animation: screenIn 0.35s ease-out;
+      }
+
+      .screen.active {
+        display: flex;
+      }
+
+      @keyframes screenIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* Vertical column — centered block */
+      .screen-stack {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        max-width: 340px;
+        margin-inline: auto;
+      }
+
+      .screen-stack--menu {
+        gap: clamp(18px, 4.5vh, 30px);
+      }
+
+      .screen-stack--ready {
+        gap: clamp(14px, 3.5vh, 22px);
+      }
+
+      .screen-stack--modal {
+        gap: clamp(16px, 4vh, 26px);
+      }
+
+      .screen-stack .title-main,
+      .screen-stack .subtitle-ready,
+      .screen-stack .instruction {
+        margin-bottom: 0;
+      }
+
+      /* Distinct screen moods */
+      #screen-menu.screen.active {
+        background:
+          radial-gradient(
+            ellipse 130% 85% at 50% 18%,
+            var(--menu-tint-top),
+            transparent 52%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(15, 110, 125, 0.45) 0%,
+            transparent 42%,
+            var(--menu-tint-bottom) 100%
+          );
+      }
+
+      #screen-ready.screen.active {
+        background: linear-gradient(
+          185deg,
+          var(--ready-glow) 0%,
+          transparent 38%,
+          rgba(0, 72, 82, 0.22) 100%
+        );
+      }
+
+      #screen-settings.screen.active {
+        background: linear-gradient(
+          180deg,
+          rgba(0, 56, 64, 0.28) 0%,
+          transparent 55%,
+          rgba(0, 40, 48, 0.25) 100%
+        );
+      }
+
+      .screen.modal::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.48);
+        z-index: 0;
+        animation: fadeIn 0.3s ease;
+      }
+
+      #screen-gameover.screen.modal::before {
+        background: var(--go-modal);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .screen.modal > *:not(.backdrop) {
+        position: relative;
+        z-index: 1;
+      }
+
+      .title-main {
+        font-size: clamp(18px, 4.8vw, 28px);
+        line-height: 1.55;
+        letter-spacing: 0.02em;
+        color: var(--white);
+        text-shadow:
+          3px 0 0 var(--shadow),
+          -3px 0 0 var(--shadow),
+          0 3px 0 var(--shadow),
+          0 -3px 0 var(--shadow),
+          2px 2px 0 var(--shadow);
+      }
+
+      .subtitle-ready {
+        font-size: clamp(12px, 3.2vw, 15px);
+        line-height: 1.6;
+        color: var(--subtitle-green);
+        text-shadow:
+          2px 0 0 #1b5e20,
+          -2px 0 0 #1b5e20,
+          0 2px 0 #1b5e20,
+          -2px -2px 0 #1b5e20,
+          2px -2px 0 #1b5e20;
+      }
+
+      .instruction {
+        font-size: clamp(8px, 2vw, 10px);
+        line-height: 2;
+        color: var(--white);
+        text-shadow: 2px 2px 0 var(--shadow);
+        max-width: 300px;
+        opacity: 0.96;
+      }
+
+      /* Menu: bird tile */
+      .menu-bird-wrap {
+        width: clamp(118px, 32vw, 142px);
+        height: clamp(118px, 32vw, 142px);
+        background: linear-gradient(
+          165deg,
+          #4fe074 0%,
+          #39d355 45%,
+          #2a9e3f 100%
+        );
+        border: 4px solid #1f7a30;
+        border-radius: clamp(18px, 4vw, 24px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow:
+          0 var(--arcade-depth) 0 rgba(0, 0, 0, 0.22),
+          inset 0 3px 0 rgba(255, 255, 255, 0.35),
+          inset 0 -4px 0 rgba(0, 0, 0, 0.08);
+      }
+
+      #menuBird {
+        width: 72px;
+        height: 72px;
+        image-rendering: pixelated;
+      }
+
+      .menu-buttons {
+        display: flex;
+        gap: clamp(14px, 4vw, 22px);
+        justify-content: center;
+        align-items: center;
+        flex-wrap: nowrap;
+      }
+
+      /* Arcade buttons shared */
+      .btn {
+        font-family: "Press Start 2P", monospace;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition:
+          transform 0.07s ease,
+          filter 0.15s ease,
+          box-shadow 0.07s ease;
+      }
+
+      .btn-square:active {
+        transform: translateY(4px);
+        box-shadow: 0 2px 0 rgba(0, 0, 0, 0.14);
+      }
+
+      .btn-square {
+        width: clamp(68px, 18vw, 78px);
+        height: clamp(68px, 18vw, 78px);
+        border-radius: clamp(14px, 3vw, 18px);
+        background: linear-gradient(
+          180deg,
+          #ffffff 0%,
+          #ececec 55%,
+          #d8d8d8 100%
+        );
+        border: 3px solid #bdbdbd;
+        box-shadow:
+          0 5px 0 #9e9e9e,
+          inset 0 2px 0 rgba(255, 255, 255, 0.95),
+          inset 0 -3px 0 rgba(0, 0, 0, 0.06);
+        font-size: clamp(20px, 5vw, 24px);
+      }
+
+      .btn-square:hover {
+        filter: brightness(1.04);
+      }
+
+      .btn-play-icon {
+        color: #21a038;
+        font-size: clamp(26px, 7vw, 32px);
+        line-height: 1;
+        margin-left: 5px;
+      }
+
+      .btn-orange {
+        --d: var(--arcade-depth);
+        background: linear-gradient(
+          180deg,
+          var(--ui-orange-highlight) 0%,
+          var(--ui-orange-mid) 38%,
+          var(--ui-orange) 52%,
+          var(--ui-orange-dark) 100%
+        );
+        color: var(--white);
+        border: 3px solid var(--arcade-edge);
+        border-radius: clamp(14px, 3.2vw, 20px);
+        padding: clamp(17px, 4vh, 22px) clamp(32px, 8vw, 44px);
+        font-size: clamp(9px, 2.3vw, 11px);
+        letter-spacing: 0.06em;
+        text-shadow:
+          2px 2px 0 rgba(0, 0, 0, 0.4),
+          0 -1px 0 rgba(0, 0, 0, 0.15);
+        box-shadow:
+          0 var(--d) 0 var(--arcade-edge),
+          inset 0 2px 0 rgba(255, 255, 255, 0.38),
+          inset 0 -5px 0 rgba(0, 0, 0, 0.12);
+        min-width: min(260px, 86vw);
+      }
+
+      .btn-orange:hover {
+        filter: brightness(1.06);
+      }
+
+      .btn-orange:active {
+        transform: translateY(var(--d));
+        box-shadow:
+          0 0 0 var(--arcade-edge),
+          inset 0 3px 10px rgba(0, 0, 0, 0.28);
+      }
+
+      .btn-back {
+        position: absolute;
+        top: max(14px, env(safe-area-inset-top));
+        left: max(14px, env(safe-area-inset-left));
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        background: linear-gradient(
+          180deg,
+          var(--ui-orange-highlight) 0%,
+          var(--ui-orange-mid) 45%,
+          var(--ui-orange-dark) 100%
+        );
+        color: var(--white);
+        font-size: 18px;
+        border: 3px solid var(--arcade-edge);
+        box-shadow:
+          0 5px 0 var(--arcade-edge),
+          inset 0 2px 0 rgba(255, 255, 255, 0.35);
+        z-index: 2;
+      }
+
+      .btn-back:active {
+        transform: translateY(4px);
+        box-shadow:
+          0 1px 0 var(--arcade-edge),
+          inset 0 2px 8px rgba(0, 0, 0, 0.25);
+      }
+
+      .pause-stack {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: clamp(22px, 5vh, 34px);
+      }
+
+      .btn-resume {
+        --d: 8px;
+        width: clamp(92px, 24vw, 104px);
+        height: clamp(92px, 24vw, 104px);
+        border-radius: clamp(16px, 4vw, 20px);
+        background: linear-gradient(
+          180deg,
+          var(--ui-orange-highlight) 0%,
+          var(--ui-orange-mid) 42%,
+          var(--ui-orange) 100%
+        );
+        border: 3px solid var(--arcade-edge);
+        font-size: clamp(34px, 9vw, 42px);
+        color: var(--white);
+        text-shadow: 2px 3px 0 rgba(0, 0, 0, 0.35);
+        box-shadow:
+          0 var(--d) 0 var(--arcade-edge),
+          inset 0 3px 0 rgba(255, 255, 255, 0.35),
+          inset 0 -6px 0 rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-resume:active {
+        transform: translateY(var(--d));
+        box-shadow:
+          0 0 0 var(--arcade-edge),
+          inset 0 4px 12px rgba(0, 0, 0, 0.25);
+      }
+
+      .pause-title {
+        font-size: clamp(16px, 4.2vw, 22px);
+        color: var(--white);
+        text-shadow:
+          3px 3px 0 var(--shadow),
+          -1px -1px 0 var(--shadow);
+        letter-spacing: 0.08em;
+      }
+
+      /* Game over — trophy vibe */
+      #screen-gameover .go-title {
+        padding: 6px 18px;
+        border-radius: 12px;
+        background: rgba(255, 87, 34, 0.12);
+        border: 3px solid rgba(183, 28, 28, 0.35);
+      }
+
+      .go-title {
+        font-size: clamp(15px, 4vw, 19px);
+        color: #ff8a65;
+        text-shadow:
+          3px 0 0 var(--shadow),
+          -3px 0 0 var(--shadow),
+          0 3px 0 var(--shadow),
+          2px 2px 0 #8d2600;
+        letter-spacing: 0.04em;
+      }
+
+      .score-panel {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: clamp(14px, 4vw, 22px);
+        width: 100%;
+        max-width: 308px;
+        background: linear-gradient(
+          180deg,
+          #ebe4a8 0%,
+          var(--panel-tan) 35%,
+          #cfc278 100%
+        );
+        border: 4px solid var(--panel-border);
+        border-radius: clamp(14px, 3vw, 20px);
+        padding: clamp(18px, 4vh, 24px) clamp(18px, 4vw, 24px);
+        box-shadow:
+          0 var(--arcade-depth) 0 rgba(92, 74, 36, 0.35),
+          inset 0 2px 0 rgba(255, 255, 255, 0.45),
+          inset 0 -4px 0 rgba(0, 0, 0, 0.06);
+      }
+
+      .medal {
+        width: clamp(56px, 15vw, 64px);
+        height: clamp(56px, 15vw, 64px);
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 32% 28%,
+          #fff9c4,
+          #ffb300 55%,
+          #e65100
+        );
+        border: 4px solid #ad7100;
+        flex-shrink: 0;
+        box-shadow:
+          inset 0 -6px 12px rgba(0, 0, 0, 0.18),
+          inset 0 4px 8px rgba(255, 255, 255, 0.45);
+      }
+
+      .score-cols {
+        flex: 1;
+        min-width: 0;
+        font-size: clamp(8px, 2vw, 10px);
+        line-height: 2.2;
+        color: var(--text-dark);
+        text-align: left;
+      }
+
+      .score-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .score-row + .score-row {
+        margin-top: 8px;
+      }
+
+      .score-row .val {
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* Settings — sheet style */
+      .settings-panel {
+        background: linear-gradient(
+          180deg,
+          #ebe4a8 0%,
+          var(--panel-tan) 40%,
+          #cfc278 100%
+        );
+        border: 4px solid var(--panel-border);
+        border-radius: clamp(14px, 3vw, 20px);
+        padding: clamp(26px, 6vh, 36px) clamp(22px, 5vw, 28px);
+        width: 100%;
+        max-width: 318px;
+        box-shadow:
+          0 var(--arcade-depth) 0 rgba(92, 74, 36, 0.32),
+          inset 0 2px 0 rgba(255, 255, 255, 0.4);
+      }
+
+      .settings-title {
+        font-size: clamp(10px, 2.6vw, 12px);
+        color: var(--text-dark);
+        margin-bottom: clamp(18px, 4vh, 26px);
+        text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+      }
+
+      .settings-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        font-size: clamp(8px, 2vw, 9px);
+        color: #c62828;
+        text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.35);
+      }
+
+      .settings-row + .settings-row {
+        margin-top: clamp(18px, 4vh, 22px);
+        padding-top: clamp(18px, 4vh, 22px);
+        border-top: 3px dashed rgba(139, 115, 85, 0.45);
+      }
+
+      .switch {
+        position: relative;
+        width: 54px;
+        height: 30px;
+        background: linear-gradient(180deg, #bdbdbd 0%, #9e9e9e 100%);
+        border-radius: 15px;
+        border: 3px solid #616161;
+        cursor: pointer;
+        flex-shrink: 0;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
+        transition: background 0.2s ease;
+      }
+
+      .switch.on {
+        background: linear-gradient(
+          180deg,
+          #69f0ae 0%,
+          #39d355 55%,
+          #2a9e3f 100%
+        );
+        border-color: #1f7a30;
+      }
+
+      .switch::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 18px;
+        height: 18px;
+        background: linear-gradient(180deg, #fff 0%, #eee 100%);
+        border-radius: 50%;
+        border: 2px solid #757575;
+        transition: transform 0.2s ease;
+      }
+
+      .switch.on::after {
+        transform: translateX(23px);
+        border-color: #1f7a30;
+      }
+
+      /* HUD */
+      /* Let taps pass through to the canvas; only the pause control is interactive */
+      #hud {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 10;
+      }
+
+      .hud-pause {
+        position: absolute;
+        top: max(14px, env(safe-area-inset-top));
+        left: max(14px, env(safe-area-inset-left));
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        background: linear-gradient(
+          180deg,
+          var(--ui-orange-highlight) 0%,
+          var(--ui-orange-mid) 48%,
+          var(--ui-orange-dark) 100%
+        );
+        border: 3px solid var(--arcade-edge);
+        color: var(--white);
+        font-size: 14px;
+        font-family: "Press Start 2P", monospace;
+        letter-spacing: -2px;
+        cursor: pointer;
+        pointer-events: auto;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        box-shadow:
+          0 5px 0 var(--arcade-edge),
+          inset 0 2px 0 rgba(255, 255, 255, 0.35),
+          inset 0 -4px 0 rgba(0, 0, 0, 0.12);
+      }
+
+      .hud-pause:active {
+        transform: translateY(4px);
+        box-shadow:
+          0 1px 0 var(--arcade-edge),
+          inset 0 2px 8px rgba(0, 0, 0, 0.22);
+      }
+
+      #hud.playing .hud-pause {
+        display: flex;
+      }
+
+      .hud-score {
+        position: absolute;
+        top: max(22px, env(safe-area-inset-top));
+        left: 50%;
+        transform: translate(-50%, 0);
+        font-size: clamp(26px, 7vw, 40px);
+        line-height: 1;
+        color: var(--white);
+        text-shadow:
+          3px 0 0 var(--shadow),
+          -3px 0 0 var(--shadow),
+          0 3px 0 var(--shadow),
+          0 -3px 0 var(--shadow),
+          2px 2px 0 var(--shadow);
+        display: none;
+      }
+
+      #hud.playing .hud-score {
+        display: block;
+      }
+
+      .tap-hint {
+        margin-top: 0;
+        font-size: clamp(7px, 1.8vw, 8px);
+        line-height: 1.9;
+        color: rgba(255, 255, 255, 0.92);
+        text-shadow: 2px 2px 0 var(--shadow);
+        max-width: 280px;
+      }
+
+      #screen-ready {
+        pointer-events: none;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .screen,
+        .screen.modal::before {
+          animation: none;
+        }
+
+        .btn,
+        .hud-pause {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stage">
+      <canvas id="game" width="480" height="720" aria-hidden="false"></canvas>
+      <button
+        type="button"
+        class="theme-toggle"
+        id="themeToggle"
+        aria-label="Switch to dark mode"
+        title="Dark mode"
+      >
+        🌙
+      </button>
+
+      <!-- Play HUD: pause + score -->
+      <div id="hud" class="hud" aria-hidden="true">
+        <button
+          type="button"
+          class="hud-pause"
+          id="btnPause"
+          aria-label="Pause"
+        >
+          ❚❚
+        </button>
+        <div class="hud-score" id="hudScore">0</div>
+      </div>
+
+      <!-- 1. Menu -->
+      <section
+        id="screen-menu"
+        class="screen active"
+        data-screen="menu"
+        aria-label="Main menu"
+      >
+        <div class="screen-stack screen-stack--menu">
+          <h1 class="title-main">FlappyBird</h1>
+          <div class="menu-bird-wrap" aria-hidden="true">
+            <canvas id="menuBird" width="72" height="72"></canvas>
+          </div>
+          <div class="menu-buttons">
+            <button
+              type="button"
+              class="btn btn-square"
+              id="menuPlay"
+              aria-label="Play"
+            >
+              <span class="btn-play-icon">▶</span>
+            </button>
+            <button
+              type="button"
+              class="btn btn-square"
+              id="menuSettings"
+              aria-label="Settings"
+            >
+              ⚙
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Get Ready -->
+      <section
+        id="screen-ready"
+        class="screen"
+        data-screen="ready"
+        aria-label="Get ready"
+      >
+        <div class="screen-stack screen-stack--ready">
+          <h1 class="title-main">FlappyBird</h1>
+          <p class="subtitle-ready">Get Ready!</p>
+          <p class="instruction">Tap or press Space to start</p>
+          <p class="tap-hint">Jump into the first pipe gap!</p>
+        </div>
+      </section>
+
+      <!-- 4. Pause -->
+      <section
+        id="screen-pause"
+        class="screen modal"
+        data-screen="pause"
+        aria-label="Paused"
+      >
+        <div class="screen-stack screen-stack--modal">
+          <p class="pause-title">Pause</p>
+          <div class="pause-stack">
+            <button
+              type="button"
+              class="btn btn-resume"
+              id="btnResume"
+              aria-label="Resume"
+            >
+              ▶
+            </button>
+            <button type="button" class="btn btn-orange" id="btnPauseRestart">
+              RESTART
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Game Over -->
+      <section
+        id="screen-gameover"
+        class="screen modal"
+        data-screen="gameover"
+        aria-label="Game over"
+      >
+        <div class="screen-stack screen-stack--modal">
+          <h2 class="go-title">Game Over</h2>
+          <div class="score-panel">
+            <div id="leaderboard" style="margin-top:12px; color:white; font-size:10px;"></div>
+            <div class="medal" title="Medal"></div>
+            <div class="score-cols">
+              <div class="score-row">
+                <span class="score-label">SCORE</span>
+                <span class="val" id="goScore">0</span>
+              </div>
+              <div class="score-row">
+                <span class="score-label">BEST</span>
+                <span class="val" id="goBest">0</span>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn btn-orange" id="btnGoRestart">
+            RESTART
+          </button>
+        </div>
+      </section>
+
+      <!-- 6. Settings -->
+      <section
+        id="screen-settings"
+        class="screen"
+        data-screen="settings"
+        aria-label="Settings"
+      >
+        <button
+          type="button"
+          class="btn btn-back"
+          id="btnSettingsBack"
+          aria-label="Back"
+        >
+          ◀
+        </button>
+        <div class="screen-stack screen-stack--modal">
+          <h2 class="settings-title">SETTINGS</h2>
+          <div class="settings-panel">
+            <div class="settings-row">
+              <span>SOUND</span>
+              <button
+                type="button"
+                class="switch on"
+                id="swSound"
+                role="switch"
+                aria-checked="true"
+              ></button>
+            </div>
+            <div class="settings-row">
+              <span>MUSIC</span>
+              <button
+                type="button"
+                class="switch on"
+                id="swMusic"
+                role="switch"
+                aria-checked="true"
+              ></button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+
+        /** Application + gameplay screen machine */
+        const Screen = {
+          MENU: "MENU",
+          READY: "READY",
+          PLAYING: "PLAYING",
+          PAUSED: "PAUSED",
+          GAME_OVER: "GAME_OVER",
+          SETTINGS: "SETTINGS",
+        };
+
+        const canvas = document.getElementById("game");
+        const ctx = canvas.getContext("2d");
+        const W = canvas.width;
+        const H = canvas.height;
+
+        const menuBirdCanvas = document.getElementById("menuBird");
+        const menuBirdCtx = menuBirdCanvas.getContext("2d");
+
+        /** Theme colors from CSS variables (canvas cannot use var() directly) */
+        function cssVar(name) {
+          return getComputedStyle(document.documentElement)
+            .getPropertyValue(name)
+            .trim();
+        }
+
+        const GRAVITY = 0.42;
+        const JUMP_V = -8.3;
+        const MAX_FALL = 12;
+        const BIRD_X = 115;
+        const BIRD_W = 36;
+        const BIRD_H = 26;
+        const GROUND_H = 118;
+
+        /** Fixed star field for dark mode (drawn only when data-theme=dark) */
+        const stars = (function () {
+          var out = [];
+          var seed = 911;
+          function rnd() {
+            seed = (seed * 16807) % 2147483647;
+            return (seed & 2147483646) / 2147483648;
+          }
+          for (var i = 0; i < 82; i++) {
+            out.push({
+              x: rnd() * W,
+              y: rnd() * (H - GROUND_H - 24),
+              s: rnd() * 2 + 0.45,
+            });
+          }
+          return out;
+        })();
+
+        const PIPE_W = 54;
+        const PIPE_GAP = 152;
+        const PIPE_SPEED = 2.85;
+        const PIPE_SPACING = 208;
+
+        let screen = Screen.MENU;
+        let bestScore = Number(localStorage.getItem("fb_best") || 0);
+        let soundOn = localStorage.getItem("fb_sound") !== "0";
+        let musicOn = localStorage.getItem("fb_music") !== "0";
+
+        let score = 0;
+        let birdY = H / 2;
+        /** Vertical velocity (px/frame); jump = negative, gravity increases each frame */
+        let velocityY = 0;
+        let pipes = [];
+        let groundScroll = 0;
+        let idlePhase = 0;
+
+        /* ---------- DOM ---------- */
+        const els = {
+          menu: document.getElementById("screen-menu"),
+          ready: document.getElementById("screen-ready"),
+          pause: document.getElementById("screen-pause"),
+          gameover: document.getElementById("screen-gameover"),
+          settings: document.getElementById("screen-settings"),
+          hud: document.getElementById("hud"),
+          hudScore: document.getElementById("hudScore"),
+          goScore: document.getElementById("goScore"),
+          goBest: document.getElementById("goBest"),
+          swSound: document.getElementById("swSound"),
+          swMusic: document.getElementById("swMusic"),
+        };
+
+        const screens = [
+          els.menu,
+          els.ready,
+          els.pause,
+          els.gameover,
+          els.settings,
+        ];
+
+        function setScreen(next) {
+          screen = next;
+          screens.forEach(function (el) {
+            var key = el.dataset.screen;
+            var active =
+              (next === Screen.MENU && key === "menu") ||
+              (next === Screen.READY && key === "ready") ||
+              (next === Screen.PAUSED && key === "pause") ||
+              (next === Screen.GAME_OVER && key === "gameover") ||
+              (next === Screen.SETTINGS && key === "settings");
+            el.classList.toggle("active", active);
+          });
+
+          els.hud.classList.toggle(
+            "playing",
+            next === Screen.PLAYING || next === Screen.PAUSED,
+          );
+          els.hud.classList.toggle(
+            "active",
+            next === Screen.PLAYING || next === Screen.PAUSED,
+          );
+          els.hud.setAttribute(
+            "aria-hidden",
+            next === Screen.PLAYING || next === Screen.PAUSED
+              ? "false"
+              : "true",
+          );
+
+          if (next === Screen.PLAYING || next === Screen.PAUSED) {
+            els.hudScore.textContent = String(score);
+          }
+        }
+
+        /* ---------- Audio (simple bleeps; respects toggles) ---------- */
+        var audioCtx = null;
+        function beep(freq, dur, vol) {
+          if (!soundOn) return;
+          try {
+            if (!audioCtx)
+              audioCtx = new (
+                window.AudioContext || window.webkitAudioContext
+              )();
+            var o = audioCtx.createOscillator();
+            var g = audioCtx.createGain();
+            o.connect(g);
+            g.connect(audioCtx.destination);
+            o.frequency.value = freq;
+            g.gain.value = vol;
+            o.start();
+            o.stop(audioCtx.currentTime + dur);
+          } catch (e) {}
+        }
+        function sfxJump() {
+          beep(380, 0.06, 0.05);
+        }
+        function sfxScore() {
+          beep(520, 0.05, 0.04);
+        }
+        function sfxHit() {
+          beep(120, 0.12, 0.08);
+        }
+
+        /** POST run score to Express API; failures are logged only (game keeps working). */
+        var SCORE_API_BASE = "http://localhost:3000";
+
+        function submitScoreToServer(currentScore) {
+          fetch(SCORE_API_BASE + "/score", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ score: currentScore }),
+          })
+            .then(function (res) {
+              if (!res.ok) {
+                return res.text().then(function (body) {
+                  console.warn(
+                    "Score server responded with",
+                    res.status,
+                    body || "",
+                  );
+                });
+              }
+            })
+            .catch(function (err) {
+              console.warn("Could not send score to server:", err);
+            });
+        }
+
+        /* ---------- Game logic ---------- */
+        function resetRound() {
+          score = 0;
+          pipes = [];
+          birdY = H / 2;
+          velocityY = 0;
+          groundScroll = 0;
+        }
+
+        function spawnPipe(x) {
+          var margin = 95;
+          var minY = margin + PIPE_GAP / 2;
+          var maxY = H - GROUND_H - margin - PIPE_GAP / 2;
+          pipes.push({
+            x: x,
+            gapY: minY + Math.random() * (maxY - minY),
+            scored: false,
+          });
+        }
+
+        function ensurePipes() {
+          if (pipes.length === 0) {
+            spawnPipe(W + 60);
+            return;
+          }
+          var last = pipes[pipes.length - 1];
+          if (last.x < W - PIPE_SPACING) {
+            spawnPipe(last.x + PIPE_SPACING);
+          }
+        }
+
+        function birdRect() {
+          return {
+            left: BIRD_X - BIRD_W / 2,
+            top: birdY - BIRD_H / 2,
+            right: BIRD_X + BIRD_W / 2,
+            bottom: birdY + BIRD_H / 2,
+          };
+        }
+
+        function overlap(a, b) {
+          return !(
+            a.right <= b.left ||
+            a.left >= b.right ||
+            a.bottom <= b.top ||
+            a.top >= b.bottom
+          );
+        }
+
+        function hitWorld(br) {
+          if (br.top <= 0 || br.bottom >= H - GROUND_H) return true;
+          for (var i = 0; i < pipes.length; i++) {
+            var p = pipes[i];
+            var g = p.gapY;
+            var hg = PIPE_GAP / 2;
+            var topPipe = {
+              left: p.x,
+              top: 0,
+              right: p.x + PIPE_W,
+              bottom: g - hg,
+            };
+            var botPipe = {
+              left: p.x,
+              top: g + hg,
+              right: p.x + PIPE_W,
+              bottom: H - GROUND_H,
+            };
+            if (overlap(br, topPipe) || overlap(br, botPipe)) return true;
+          }
+          return false;
+        }
+
+        function updatePlaying() {
+          velocityY += GRAVITY;
+          if (velocityY > MAX_FALL) velocityY = MAX_FALL;
+          birdY += velocityY;
+
+          var br = birdRect();
+          if (hitWorld(br)) {
+            sfxHit();
+            if (score > bestScore) {
+              bestScore = score;
+              localStorage.setItem("fb_best", String(bestScore));
+            }
+            els.goScore.textContent = String(score);
+            els.goBest.textContent = String(bestScore);
+            submitScoreToServer(score);
+            setScreen(Screen.GAME_OVER);
+            return;
+          }
+
+          for (var j = pipes.length - 1; j >= 0; j--) {
+            pipes[j].x -= PIPE_SPEED;
+            if (pipes[j].x + PIPE_W < 0) pipes.splice(j, 1);
+          }
+          groundScroll += PIPE_SPEED;
+          ensurePipes();
+
+          for (var k = 0; k < pipes.length; k++) {
+            var pp = pipes[k];
+            if (!pp.scored && BIRD_X > pp.x + PIPE_W) {
+              pp.scored = true;
+              score += 1;
+              sfxScore();
+              els.hudScore.textContent = String(score);
+            }
+          }
+        }
+
+        function updateIdle() {
+          idlePhase += 0.055;
+          birdY = H * 0.42 + Math.sin(idlePhase) * 10;
+        }
+
+        function update() {
+          if (
+            screen === Screen.MENU ||
+            screen === Screen.SETTINGS ||
+            screen === Screen.READY
+          ) {
+            groundScroll += 0.35;
+          }
+          if (screen === Screen.MENU || screen === Screen.SETTINGS) {
+            updateIdle();
+            return;
+          }
+          if (screen === Screen.READY) {
+            updateIdle();
+            return;
+          }
+          if (screen === Screen.PLAYING) {
+            updatePlaying();
+            return;
+          }
+          /* PAUSED, GAME_OVER: freeze */
+        }
+
+        /* ---------- Rendering (colors from CSS theme variables) ---------- */
+        function drawSky() {
+          var g = ctx.createLinearGradient(0, 0, 0, H);
+          g.addColorStop(0, cssVar("--canvas-sky-top"));
+          g.addColorStop(1, cssVar("--canvas-sky-bottom"));
+          ctx.fillStyle = g;
+          ctx.fillRect(0, 0, W, H);
+        }
+
+        function drawStars() {
+          if (document.documentElement.getAttribute("data-theme") !== "dark") {
+            return;
+          }
+          ctx.fillStyle = cssVar("--canvas-star");
+          for (var si = 0; si < stars.length; si++) {
+            var st = stars[si];
+            ctx.fillRect(st.x, st.y, st.s, st.s);
+          }
+        }
+
+        function drawClouds() {
+          ctx.fillStyle = cssVar("--canvas-cloud");
+          var clouds = [
+            { x: 40, y: 90, w: 86, h: 34 },
+            { x: 220, y: 140, w: 100, h: 38 },
+            { x: 360, y: 70, w: 76, h: 30 },
+            { x: 300, y: 200, w: 90, h: 36 },
+          ];
+          for (var i = 0; i < clouds.length; i++) {
+            var c = clouds[i];
+            roundRect(ctx, c.x, c.y, c.w, c.h, 16);
+            ctx.fill();
+            roundRect(ctx, c.x + 25, c.y - 12, c.w * 0.55, c.h * 0.7, 12);
+            ctx.fill();
+          }
+        }
+
+        function roundRect(c, x, y, w, h, r) {
+          c.beginPath();
+          c.moveTo(x + r, y);
+          c.arcTo(x + w, y, x + w, y + h, r);
+          c.arcTo(x + w, y + h, x, y + h, r);
+          c.arcTo(x, y + h, x, y, r);
+          c.arcTo(x, y, x + w, y, r);
+          c.closePath();
+        }
+
+        function drawCityscape() {
+          var base = H - GROUND_H - 52;
+          for (var i = 0; i < 14; i++) {
+            var x = i * 38 - ((groundScroll * 0.15) % 38);
+            var h = 22 + ((i * 7) % 28);
+            ctx.fillStyle =
+              i % 2 === 0
+                ? cssVar("--canvas-city-light")
+                : cssVar("--canvas-city-dark");
+            ctx.fillRect(x, base - h, 28, h);
+            ctx.strokeStyle = cssVar("--canvas-pipe-stroke");
+            ctx.lineWidth = 2;
+            ctx.strokeRect(x, base - h, 28, h);
+          }
+        }
+
+        function drawForestSilhouette() {
+          var y0 = H - GROUND_H - 8;
+          ctx.fillStyle = cssVar("--canvas-forest");
+          ctx.beginPath();
+          ctx.moveTo(0, y0);
+          for (var x = 0; x <= W; x += 18) {
+            ctx.lineTo(x, y0 - 14 - (x % 5) * 3);
+          }
+          ctx.lineTo(W, y0);
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        function drawGround() {
+          var gy = H - GROUND_H;
+          ctx.fillStyle = cssVar("--canvas-dirt");
+          ctx.fillRect(0, gy + 22, W, GROUND_H - 22);
+
+          var off = groundScroll % 20;
+          ctx.strokeStyle = cssVar("--canvas-dirt-stripe");
+          ctx.lineWidth = 2;
+          for (var row = gy + 36; row < H; row += 16) {
+            for (var sx = -off; sx < W; sx += 22) {
+              ctx.beginPath();
+              ctx.moveTo(sx, row);
+              ctx.lineTo(sx + 14, row + 14);
+              ctx.stroke();
+            }
+          }
+
+          drawForestSilhouette();
+          ctx.fillStyle = cssVar("--canvas-grass");
+          ctx.fillRect(0, gy, W, 26);
+          ctx.fillStyle = cssVar("--canvas-grass-top");
+          ctx.fillRect(0, gy, W, 8);
+        }
+
+        function drawPipe(p) {
+          var g = p.gapY;
+          var hg = PIPE_GAP / 2;
+          var topH = g - hg;
+          var botY = g + hg;
+          var botH = H - GROUND_H - botY;
+
+          function chunk(x, y, h, lipBottom) {
+            ctx.fillStyle = cssVar("--canvas-pipe");
+            ctx.fillRect(x, y, PIPE_W, h);
+            ctx.fillStyle = cssVar("--canvas-pipe-shade");
+            ctx.fillRect(x + PIPE_W - 8, y, 8, h);
+            ctx.strokeStyle = cssVar("--canvas-pipe-stroke");
+            ctx.lineWidth = 3;
+            ctx.strokeRect(x, y, PIPE_W, h);
+            var cap = 24;
+            var cy = lipBottom ? y + h - cap : y;
+            ctx.fillStyle = cssVar("--canvas-pipe");
+            ctx.fillRect(x - 4, cy, PIPE_W + 8, cap);
+            ctx.strokeRect(x - 4, cy, PIPE_W + 8, cap);
+          }
+
+          chunk(p.x, 0, topH, true);
+          chunk(p.x, botY, botH, false);
+        }
+
+        function drawBird(cx, cy, scale) {
+          scale = scale || 1;
+          ctx.save();
+          ctx.translate(cx, cy);
+          ctx.scale(scale, scale);
+          var tilt = Math.max(-0.85, Math.min(1.1, velocityY * 0.11));
+          if (
+            screen === Screen.MENU ||
+            screen === Screen.READY ||
+            screen === Screen.SETTINGS
+          ) {
+            tilt = 0;
+          }
+          ctx.rotate(tilt);
+
+          /* Pixel-outline bird */
+          ctx.lineWidth = 3;
+          ctx.strokeStyle = cssVar("--canvas-pipe-stroke");
+          ctx.fillStyle = "#ffdd55";
+          ctx.beginPath();
+          ctx.ellipse(0, 0, BIRD_W / 2, BIRD_H / 2, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = "#fff";
+          ctx.beginPath();
+          ctx.ellipse(-5, 4, 9, 6, -0.2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = "#fff";
+          ctx.beginPath();
+          ctx.arc(9, -5, 8, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = "#222";
+          ctx.beginPath();
+          ctx.arc(11, -5, 3, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = "#e53935";
+          ctx.beginPath();
+          ctx.moveTo(BIRD_W / 2 - 2, 0);
+          ctx.lineTo(BIRD_W / 2 + 14, 3);
+          ctx.lineTo(BIRD_W / 2 - 2, 7);
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.restore();
+        }
+
+        function drawMenuBirdIcon() {
+          var mb = menuBirdCtx;
+          mb.clearRect(0, 0, 72, 72);
+          mb.save();
+          mb.translate(36, 38);
+          mb.scale(1.15, 1.15);
+          velocityY = 0;
+          drawBirdToCtx(mb, 0, 0);
+          mb.restore();
+        }
+
+        function drawBirdToCtx(c, cx, cy) {
+          c.lineWidth = 3;
+          c.strokeStyle = cssVar("--canvas-pipe-stroke");
+          c.fillStyle = "#ffdd55";
+          c.beginPath();
+          c.ellipse(cx, cy, BIRD_W / 2, BIRD_H / 2, 0, 0, Math.PI * 2);
+          c.fill();
+          c.stroke();
+          c.fillStyle = "#fff";
+          c.beginPath();
+          c.ellipse(cx - 5, cy + 4, 9, 6, -0.2, 0, Math.PI * 2);
+          c.fill();
+          c.stroke();
+          c.beginPath();
+          c.arc(cx + 9, cy - 5, 8, 0, Math.PI * 2);
+          c.fill();
+          c.stroke();
+          c.fillStyle = "#222";
+          c.beginPath();
+          c.arc(cx + 11, cy - 5, 3, 0, Math.PI * 2);
+          c.fill();
+          c.fillStyle = "#e53935";
+          c.beginPath();
+          c.moveTo(cx + BIRD_W / 2 - 2, cy);
+          c.lineTo(cx + BIRD_W / 2 + 14, cy + 3);
+          c.lineTo(cx + BIRD_W / 2 - 2, cy + 7);
+          c.fill();
+          c.stroke();
+        }
+
+        function drawScene() {
+          drawSky();
+          drawStars();
+          drawClouds();
+          drawCityscape();
+
+          if (
+            screen === Screen.PLAYING ||
+            screen === Screen.PAUSED ||
+            screen === Screen.GAME_OVER
+          ) {
+            for (var i = 0; i < pipes.length; i++) {
+              drawPipe(pipes[i]);
+            }
+          }
+
+          drawGround();
+          drawBird(BIRD_X, birdY, 1);
+        }
+
+        function loop() {
+          update();
+          drawScene();
+          if (screen === Screen.MENU) {
+            drawMenuBirdIcon();
+          }
+          requestAnimationFrame(loop);
+        }
+
+        /* ---------- Input ---------- */
+        function startPlayingFromReady() {
+          resetRound();
+          birdY = H / 2;
+          velocityY = JUMP_V;
+          spawnPipe(W + 120);
+          setScreen(Screen.PLAYING);
+          sfxJump();
+        }
+
+        function jumpIfPlaying() {
+          if (screen === Screen.PLAYING) {
+            velocityY = JUMP_V;
+            sfxJump();
+          }
+        }
+
+        canvas.addEventListener("mousedown", function (e) {
+          if (screen === Screen.READY) {
+            e.preventDefault();
+            startPlayingFromReady();
+          } else if (screen === Screen.PLAYING) {
+            e.preventDefault();
+            jumpIfPlaying();
+          }
+        });
+
+        canvas.addEventListener(
+          "touchstart",
+          function (e) {
+            if (screen === Screen.READY) {
+              e.preventDefault();
+              startPlayingFromReady();
+            } else if (screen === Screen.PLAYING) {
+              e.preventDefault();
+              jumpIfPlaying();
+            }
+          },
+          { passive: false },
+        );
+
+        window.addEventListener("keydown", function (e) {
+          if (e.code === "Space" || e.key === " ") {
+            if (screen === Screen.READY) {
+              e.preventDefault();
+              startPlayingFromReady();
+            } else if (screen === Screen.PLAYING) {
+              e.preventDefault();
+              jumpIfPlaying();
+            }
+          }
+        });
+
+        document
+          .getElementById("menuPlay")
+          .addEventListener("click", function () {
+            resetRound();
+            setScreen(Screen.READY);
+          });
+
+        document
+          .getElementById("menuSettings")
+          .addEventListener("click", function () {
+            setScreen(Screen.SETTINGS);
+          });
+
+        document
+          .getElementById("btnPause")
+          .addEventListener("click", function (e) {
+            e.stopPropagation();
+            if (screen === Screen.PLAYING) {
+              setScreen(Screen.PAUSED);
+            }
+          });
+
+        document
+          .getElementById("btnResume")
+          .addEventListener("click", function () {
+            if (screen === Screen.PAUSED) {
+              setScreen(Screen.PLAYING);
+            }
+          });
+
+        function restartFromPauseOrGameOver() {
+          resetRound();
+          setScreen(Screen.READY);
+        }
+
+        document
+          .getElementById("btnPauseRestart")
+          .addEventListener("click", restartFromPauseOrGameOver);
+        document
+          .getElementById("btnGoRestart")
+          .addEventListener("click", restartFromPauseOrGameOver);
+
+        document
+          .getElementById("btnSettingsBack")
+          .addEventListener("click", function () {
+            setScreen(Screen.MENU);
+          });
+
+        function toggleSwitch(el, key, storageKey) {
+          el.classList.toggle("on");
+          var on = el.classList.contains("on");
+          el.setAttribute("aria-checked", on ? "true" : "false");
+          localStorage.setItem(storageKey, on ? "1" : "0");
+          if (key === "sound") soundOn = on;
+          if (key === "music") musicOn = on;
+        }
+
+        els.swSound.addEventListener("click", function () {
+          toggleSwitch(els.swSound, "sound", "fb_sound");
+        });
+        els.swMusic.addEventListener("click", function () {
+          toggleSwitch(els.swMusic, "music", "fb_music");
+        });
+
+        function syncSettingsUI() {
+          els.swSound.classList.toggle("on", soundOn);
+          els.swSound.setAttribute("aria-checked", soundOn ? "true" : "false");
+          els.swMusic.classList.toggle("on", musicOn);
+          els.swMusic.setAttribute("aria-checked", musicOn ? "true" : "false");
+        }
+        syncSettingsUI();
+
+        /* ---------- Theme (CSS variables; does not reset gameplay) ---------- */
+        var themeToggle = document.getElementById("themeToggle");
+        function syncThemeButton() {
+          var dark =
+            document.documentElement.getAttribute("data-theme") === "dark";
+          themeToggle.textContent = dark ? "☀️" : "🌙";
+          themeToggle.setAttribute(
+            "aria-label",
+            dark ? "Switch to light mode" : "Switch to dark mode",
+          );
+          themeToggle.title = dark ? "Light mode" : "Dark mode";
+        }
+        function applyTheme(mode) {
+          document.documentElement.setAttribute(
+            "data-theme",
+            mode === "dark" ? "dark" : "light",
+          );
+          try {
+            localStorage.setItem(
+              "fb_theme",
+              document.documentElement.getAttribute("data-theme"),
+            );
+          } catch (e) {}
+          syncThemeButton();
+        }
+        themeToggle.addEventListener("click", function (e) {
+          e.stopPropagation();
+          var dark =
+            document.documentElement.getAttribute("data-theme") === "dark";
+          applyTheme(dark ? "light" : "dark");
+        });
+        (function initTheme() {
+          var t = null;
+          try {
+            t = localStorage.getItem("fb_theme");
+          } catch (e) {}
+          applyTheme(t === "dark" ? "dark" : "light");
+        })();
+
+        /* ---------- Boot ---------- */
+        setScreen(Screen.MENU);
+        requestAnimationFrame(loop);
+      })();
+    </script>
+  </body>
+</html>

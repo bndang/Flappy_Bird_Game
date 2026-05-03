@@ -1,0 +1,975 @@
+/* Menu */
+
+position: relative;
+width: 402px;
+height: 874px;
+
+background: #ffffff;
+
+/* Frame 1 */
+
+position: absolute;
+width: 704px;
+height: 42px;
+left: 312px;
+top: 332px;
+
+/* background-day 1 */
+
+position: absolute;
+width: 492px;
+height: 875px;
+left: 0px;
+top: 0px;
+
+background: url(background-day.png);
+
+/* label_flappy_bird 1 */
+
+position: absolute;
+width: 200px;
+height: 54px;
+left: calc(50% - 200px / 2);
+top: 104px;
+
+background: url(label_flappy_bird.png);
+
+/* flappy_bird_icon 1 */
+
+position: absolute;
+width: 200px;
+height: 200px;
+left: calc(50% - 200px / 2);
+top: 160px;
+
+background: url(flappy_bird_icon.png);
+
+/* settings 1 */
+
+position: absolute;
+width: 100px;
+height: 58px;
+left: 239px;
+top: 458px;
+
+background: url(settings.png);
+
+/* button_play_normal 1 */
+
+position: absolute;
+width: 100px;
+height: 56px;
+left: 65px;
+top: 458px;
+
+background: url(button_play_normal.png);
+
+/* ground-sprite 1 */
+
+position: absolute;
+width: 1008px;
+height: 112px;
+left: -102px;
+top: 763px;
+
+background: url(ground-sprite);
+
+/* Start */
+
+position: relative;
+width: 402px;
+height: 874px;
+
+background: #ffffff;
+
+/* background-day 2 */
+
+position: absolute;
+width: 492px;
+height: 874px;
+left: 0px;
+top: 0px;
+
+background: url(background-day.png);
+
+/* ground-sprite 2 */
+
+position: absolute;
+width: 1008px;
+height: 112px;
+left: -333px;
+top: 762px;
+
+background: url(ground-sprite);
+
+/* message-initial 1 */
+
+position: absolute;
+width: 184px;
+height: 267px;
+left: calc(50% - 184px / 2);
+top: 242px;
+
+background: url(message-initial.png);
+
+/* bird 1 */
+
+position: absolute;
+width: 44px;
+height: 31px;
+left: calc(50% - 44px / 2);
+top: calc(50% - 31px / 2 - 8.5px);
+
+background: url(bird.png);
+
+/* back 2 */
+
+position: absolute;
+width: 40px;
+height: 57px;
+left: 15px;
+top: 15px;
+
+background: url(back.png);
+
+/* Settings */
+
+position: relative;
+width: 402px;
+height: 874px;
+
+background: #ffffff;
+
+/* background-day 3 */
+
+position: absolute;
+width: 492px;
+height: 874px;
+left: 0px;
+top: 0px;
+
+background: url(background-day.png);
+
+/* settings (1) 1 */
+
+position: absolute;
+width: 250px;
+height: 240px;
+left: calc(50% - 250px / 2);
+top: calc(50% - 240px / 2);
+
+background: url(settings (1).png);
+
+/* back 1 */
+
+position: absolute;
+width: 40px;
+height: 57px;
+left: 14px;
+top: 13px;
+
+background: url(back.png);
+
+/* ground-sprite 3 */
+
+position: absolute;
+width: 1008px;
+height: 112px;
+left: -303px;
+top: 762px;
+
+background: url(ground-sprite);
+
+/* Rectangle 1 */
+
+position: absolute;
+width: 30px;
+height: 15px;
+left: 246px;
+top: 493px;
+
+background: #000000;
+border-radius: 10px;
+
+/* Play */
+
+position: relative;
+width: 402px;
+height: 874px;
+
+background: #ffffff;
+
+/* background-day 4 */
+
+position: absolute;
+width: 500px;
+height: 888px;
+left: 0px;
+top: -14px;
+
+background: url(background-day.png);
+
+/* ground-sprite 4 */
+
+position: absolute;
+width: 1008px;
+height: 112px;
+left: -314px;
+top: 767px;
+
+background: url(ground-sprite);
+
+/* bird 2 */
+
+position: absolute;
+width: 44px;
+height: 31px;
+left: calc(50% - 44px / 2 + 5px);
+top: calc(50% - 31px / 2 + 3.5px);
+
+background: url(bird.png);
+
+/* pipe-red-top 1 */
+
+position: absolute;
+width: 52px;
+height: 320px;
+left: 300px;
+top: 0px;
+
+background: url(pipe-red-top.png);
+
+/* pipe-red-bottom 1 */
+
+position: absolute;
+width: 52px;
+height: 320px;
+left: 300px;
+top: 447px;
+
+background: url(pipe-red-bottom.png);
+
+/* button_pause 1 */
+
+position: absolute;
+width: 50px;
+height: 54px;
+left: 19px;
+top: 14px;
+
+background: url(button_pause.png);
+
+/* number0 1 */
+
+position: absolute;
+width: 24px;
+height: 36px;
+left: calc(50% - 24px / 2);
+top: 90px;
+
+background: url(number0.png);
+
+/* Game Over */
+
+position: relative;
+width: 402px;
+height: 874px;
+
+background: #ffffff;
+
+/* background-day 4 */
+
+position: absolute;
+width: 500px;
+height: 888px;
+left: 0px;
+top: -14px;
+
+background: url(background-day.png);
+
+/* ground-sprite 4 */
+
+position: absolute;
+width: 1008px;
+height: 112px;
+left: -314px;
+top: 767px;
+
+background: url(ground-sprite);
+
+/* bird 2 */
+
+position: absolute;
+width: 44px;
+height: 31px;
+left: calc(50% - 44px / 2 + 96px);
+top: calc(50% - 31px / 2 - 17.5px);
+
+background: url(bird.png);
+transform: rotate(26.47deg);
+
+/* pipe-red-top 1 */
+
+position: absolute;
+width: 52px;
+height: 320px;
+left: 300px;
+top: 0px;
+
+background: url(pipe-red-top.png);
+
+/* pipe-red-bottom 1 */
+
+position: absolute;
+width: 52px;
+height: 320px;
+left: 300px;
+top: 447px;
+
+background: url(pipe-red-bottom.png);
+
+/* gameover 1 */
+
+position: absolute;
+width: 200px;
+height: 44px;
+left: calc(50% - 200px / 2 + 4px);
+top: 234px;
+
+background: url(gameover.png);
+
+/* restart-button 2 */
+
+position: absolute;
+width: 150px;
+height: 53px;
+left: calc(50% - 150px / 2);
+top: 351px;
+
+background: url(restart-button.png);
+
+/* scoreboard 1 */
+
+position: absolute;
+width: 250px;
+height: 131px;
+left: calc(50% - 250px / 2);
+top: 524px;
+
+background: url(scoreboard.png);
+
+/* medal 1 */
+
+position: absolute;
+width: 44px;
+height: 44px;
+left: 107px;
+top: 575px;
+
+background: url(medal.png);
+
+/* Pause */
+
+position: relative;
+width: 402px;
+height: 874px;
+
+background: #ffffff;
+
+/* background-day 4 */
+
+position: absolute;
+width: 500px;
+height: 888px;
+left: 0px;
+top: -14px;
+
+background: url(background-day.png);
+
+/* ground-sprite 4 */
+
+position: absolute;
+width: 1008px;
+height: 112px;
+left: -314px;
+top: 767px;
+
+background: url(ground-sprite);
+
+/* bird 2 */
+
+position: absolute;
+width: 44px;
+height: 31px;
+left: calc(50% - 44px / 2 + 5px);
+top: calc(50% - 31px / 2 + 3.5px);
+
+background: url(bird.png);
+
+/* pipe-red-top 1 */
+
+position: absolute;
+width: 52px;
+height: 320px;
+left: 300px;
+top: 0px;
+
+background: url(pipe-red-top.png);
+
+/* pipe-red-bottom 1 */
+
+position: absolute;
+width: 52px;
+height: 320px;
+left: 300px;
+top: 447px;
+
+background: url(pipe-red-bottom.png);
+
+/* button_resume 1 */
+
+position: absolute;
+width: 75px;
+height: 81px;
+left: calc(50% - 75px / 2 + 0.5px);
+top: 239px;
+
+background: url(button_resume.png);
+
+/* restart-button 1 */
+
+position: absolute;
+width: 150px;
+height: 53px;
+left: calc(50% - 150px / 2);
+top: 588px;
+
+background: url(restart-button.png);
+
+/* number0 2 */
+
+position: absolute;
+width: 24px;
+height: 36px;
+left: calc(50% - 24px / 2);
+top: 90px;
+
+background: url(number0.png);
+
+/* Menu */
+
+position: relative;
+width: 402px;
+height: 874px;
+
+background: #ffffff;
+
+/* Frame 1 */
+
+position: absolute;
+width: 704px;
+height: 42px;
+left: 312px;
+top: 332px;
+
+/* background-day 1 */
+
+position: absolute;
+width: 492px;
+height: 875px;
+left: 0px;
+top: 0px;
+
+background: url(background-day.png);
+
+/* background-night 1 */
+
+position: absolute;
+width: 491px;
+height: 873px;
+left: 1px;
+top: 2px;
+
+background: url(background-night.png);
+
+/* label_flappy_bird 1 */
+
+position: absolute;
+width: 200px;
+height: 54px;
+left: calc(50% - 200px / 2);
+top: 104px;
+
+background: url(label_flappy_bird.png);
+
+/* flappy_bird_icon 1 */
+
+position: absolute;
+width: 200px;
+height: 200px;
+left: calc(50% - 200px / 2);
+top: 160px;
+
+background: url(flappy_bird_icon.png);
+
+/* settings 1 */
+
+position: absolute;
+width: 100px;
+height: 58px;
+left: 239px;
+top: 458px;
+
+background: url(settings.png);
+
+/* button_play_normal 1 */
+
+position: absolute;
+width: 100px;
+height: 56px;
+left: 65px;
+top: 458px;
+
+background: url(button_play_normal.png);
+
+/* ground-sprite 1 */
+
+position: absolute;
+width: 1008px;
+height: 112px;
+left: -102px;
+top: 763px;
+
+background: url(ground-sprite);
+
+/* Start */
+
+position: relative;
+width: 402px;
+height: 874px;
+
+background: #ffffff;
+
+/* background-day 2 */
+
+position: absolute;
+width: 492px;
+height: 874px;
+left: 0px;
+top: 0px;
+
+background: url(background-day.png);
+
+/* background-night 2 */
+
+position: absolute;
+width: 492px;
+height: 874px;
+left: 0px;
+top: 0px;
+
+background: url(background-night.png);
+
+/* ground-sprite 2 */
+
+position: absolute;
+width: 1008px;
+height: 112px;
+left: -333px;
+top: 762px;
+
+background: url(ground-sprite);
+
+/* message-initial 1 */
+
+position: absolute;
+width: 184px;
+height: 267px;
+left: calc(50% - 184px / 2);
+top: 242px;
+
+background: url(message-initial.png);
+
+/* bird 1 */
+
+position: absolute;
+width: 44px;
+height: 31px;
+left: calc(50% - 44px / 2);
+top: calc(50% - 31px / 2 - 8.5px);
+
+background: url(bird.png);
+
+/* back 2 */
+
+position: absolute;
+width: 40px;
+height: 57px;
+left: 15px;
+top: 15px;
+
+background: url(back.png);
+
+/* Settings */
+
+position: relative;
+width: 402px;
+height: 874px;
+
+background: #ffffff;
+
+/* background-day 3 */
+
+position: absolute;
+width: 492px;
+height: 874px;
+left: 0px;
+top: 0px;
+
+background: url(background-day.png);
+
+/* background-night 6 */
+
+position: absolute;
+width: 492px;
+height: 874px;
+left: 0px;
+top: 0px;
+
+background: url(background-night.png);
+
+/* settings (1) 1 */
+
+position: absolute;
+width: 250px;
+height: 240px;
+left: calc(50% - 250px / 2);
+top: calc(50% - 240px / 2);
+
+background: url(settings (1).png);
+
+/* back 1 */
+
+position: absolute;
+width: 40px;
+height: 57px;
+left: 14px;
+top: 13px;
+
+background: url(back.png);
+
+/* ground-sprite 3 */
+
+position: absolute;
+width: 1008px;
+height: 112px;
+left: -303px;
+top: 762px;
+
+background: url(ground-sprite);
+
+/* Rectangle 1 */
+
+position: absolute;
+width: 30px;
+height: 15px;
+left: 246px;
+top: 493px;
+
+background: #ffffff;
+border-radius: 10px;
+
+/* Play */
+
+position: relative;
+width: 402px;
+height: 874px;
+
+background: #ffffff;
+
+/* background-day 4 */
+
+position: absolute;
+width: 500px;
+height: 888px;
+left: 0px;
+top: -14px;
+
+background: url(background-day.png);
+
+/* background-night 3 */
+
+position: absolute;
+width: 492px;
+height: 874px;
+left: 0px;
+top: 0px;
+
+background: url(background-night.png);
+
+/* ground-sprite 4 */
+
+position: absolute;
+width: 1008px;
+height: 112px;
+left: -314px;
+top: 767px;
+
+background: url(ground-sprite);
+
+/* bird 2 */
+
+position: absolute;
+width: 44px;
+height: 31px;
+left: calc(50% - 44px / 2 + 5px);
+top: calc(50% - 31px / 2 + 3.5px);
+
+background: url(bird.png);
+
+/* pipe-red-top 1 */
+
+position: absolute;
+width: 52px;
+height: 320px;
+left: 300px;
+top: 0px;
+
+background: url(pipe-red-top.png);
+
+/* pipe-red-bottom 1 */
+
+position: absolute;
+width: 52px;
+height: 320px;
+left: 300px;
+top: 447px;
+
+background: url(pipe-red-bottom.png);
+
+/* button_pause 1 */
+
+position: absolute;
+width: 50px;
+height: 54px;
+left: 19px;
+top: 14px;
+
+background: url(button_pause.png);
+
+/* number0 3 */
+
+position: absolute;
+width: 24px;
+height: 36px;
+left: calc(50% - 24px / 2);
+top: 90px;
+
+background: url(number0.png);
+
+/* Game Over */
+
+position: relative;
+width: 402px;
+height: 874px;
+
+background: #ffffff;
+
+/* background-day 4 */
+
+position: absolute;
+width: 500px;
+height: 888px;
+left: 0px;
+top: -14px;
+
+background: url(background-day.png);
+
+/* background-night 4 */
+
+position: absolute;
+width: 502px;
+height: 893px;
+left: 0px;
+top: -14px;
+
+background: url(background-night.png);
+
+/* ground-sprite 4 */
+
+position: absolute;
+width: 1008px;
+height: 112px;
+left: -314px;
+top: 767px;
+
+background: url(ground-sprite);
+
+/* bird 2 */
+
+position: absolute;
+width: 44px;
+height: 31px;
+left: calc(50% - 44px / 2 + 96px);
+top: calc(50% - 31px / 2 - 17.5px);
+
+background: url(bird.png);
+transform: rotate(26.47deg);
+
+/* pipe-red-top 1 */
+
+position: absolute;
+width: 52px;
+height: 320px;
+left: 300px;
+top: 0px;
+
+background: url(pipe-red-top.png);
+
+/* pipe-red-bottom 1 */
+
+position: absolute;
+width: 52px;
+height: 320px;
+left: 300px;
+top: 447px;
+
+background: url(pipe-red-bottom.png);
+
+/* gameover 1 */
+
+position: absolute;
+width: 200px;
+height: 44px;
+left: calc(50% - 200px / 2 + 4px);
+top: 234px;
+
+background: url(gameover.png);
+
+/* restart-button 2 */
+
+position: absolute;
+width: 150px;
+height: 53px;
+left: calc(50% - 150px / 2);
+top: 351px;
+
+background: url(restart-button.png);
+
+/* scoreboard 1 */
+
+position: absolute;
+width: 250px;
+height: 131px;
+left: calc(50% - 250px / 2);
+top: 524px;
+
+background: url(scoreboard.png);
+
+/* medal 1 */
+
+position: absolute;
+width: 44px;
+height: 44px;
+left: 107px;
+top: 575px;
+
+background: url(medal.png);
+
+/* Pause */
+
+position: relative;
+width: 402px;
+height: 874px;
+
+background: #ffffff;
+
+/* background-day 4 */
+
+position: absolute;
+width: 500px;
+height: 888px;
+left: 0px;
+top: -14px;
+
+background: url(background-day.png);
+
+/* background-night 5 */
+
+position: absolute;
+width: 492px;
+height: 874px;
+left: 0px;
+top: 0px;
+
+background: url(background-night.png);
+
+/* ground-sprite 4 */
+
+position: absolute;
+width: 1008px;
+height: 112px;
+left: -314px;
+top: 767px;
+
+background: url(ground-sprite);
+
+/* bird 2 */
+
+position: absolute;
+width: 44px;
+height: 31px;
+left: calc(50% - 44px / 2 + 5px);
+top: calc(50% - 31px / 2 + 3.5px);
+
+background: url(bird.png);
+
+/* pipe-red-top 1 */
+
+position: absolute;
+width: 52px;
+height: 320px;
+left: 300px;
+top: 0px;
+
+background: url(pipe-red-top.png);
+
+/* pipe-red-bottom 1 */
+
+position: absolute;
+width: 52px;
+height: 320px;
+left: 300px;
+top: 447px;
+
+background: url(pipe-red-bottom.png);
+
+/* button_resume 1 */
+
+position: absolute;
+width: 75px;
+height: 81px;
+left: calc(50% - 75px / 2 + 0.5px);
+top: 239px;
+
+background: url(button_resume.png);
+
+/* restart-button 1 */
+
+position: absolute;
+width: 150px;
+height: 53px;
+left: calc(50% - 150px / 2);
+top: 588px;
+
+background: url(restart-button.png);
+
+/* number0 4 */
+
+position: absolute;
+width: 24px;
+height: 36px;
+left: 189px;
+top: 90px;
+
+background: url(number0.png);
